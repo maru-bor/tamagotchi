@@ -1,6 +1,5 @@
 import './App.css'
 import PetChoice from "./PetChoice.tsx";
-
 function App() {
 
 
