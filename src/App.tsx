@@ -5,7 +5,14 @@ import PetChoice from "./PetChoice.tsx";
 
 
 function App() {
-    <PetChoice/>
+    return (
+        <>
+            <div>
+                <h3>tamagotchi</h3>
+                <PetChoice/>
+            </div>
+        </>
+    );
 }
 
 export default App
