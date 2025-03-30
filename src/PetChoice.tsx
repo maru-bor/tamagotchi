@@ -18,7 +18,7 @@ const petsSleep : {[index: string]:string} = {
 };
 
 export default function PetChoice(){
-    const [pet, setPet] = useState(() => localStorage.getItem("pet") || "Pes");
+    const [pet, setPet] = useState(() => localStorage.getItem("pet") || "animal");
     const [hunger, setHunger] = useState(() => Number(localStorage.getItem("hunger")) || 50);
     const [energy, setEnergy] = useState(() => Number(localStorage.getItem("energy")) || 50);
     const [happiness, setHappiness] = useState(() => Number(localStorage.getItem("happiness")) || 50);
@@ -40,7 +40,7 @@ export default function PetChoice(){
                 setEnergy((e) => Math.max(0, e - 3));
                 setHappiness((h) => Math.max(0, h - 2));
             }
-        }, 20000);
+        }, 10000);
 
         return () => clearInterval(interval);
     }, [isSleeping]);
@@ -87,8 +87,8 @@ export default function PetChoice(){
                     <img
                         src={isSleeping ? petsSleep[pet] : petImages[pet]}
                         alt={pet}
-                        width={300}
-                        height={200}
+                        width={400}
+                        height={300}
                         style={{ transform: `translateX(${position}px)`, transition: "transform 0.5s ease-in-out" }}
                     />
                 </div>
