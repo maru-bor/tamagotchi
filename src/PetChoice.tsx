@@ -19,9 +19,9 @@ const petsSleep : {[index: string]:string} = {
 
 export default function PetChoice(){
     const [pet, setPet] = useState(() => localStorage.getItem("pet") || "animal");
-    const [hunger, setHunger] = useState(() => Number(localStorage.getItem("hunger")) || 50);
-    const [energy, setEnergy] = useState(() => Number(localStorage.getItem("energy")) || 50);
-    const [happiness, setHappiness] = useState(() => Number(localStorage.getItem("happiness")) || 50);
+    const [hunger, setHunger] = useState(Number(localStorage.getItem("hunger")) || 50);
+    const [energy, setEnergy] = useState(Number(localStorage.getItem("energy")) || 50);
+    const [happiness, setHappiness] = useState(Number(localStorage.getItem("happiness")) || 50);
     const [position, setPosition] = useState(0);
     const [isSleeping, setIsSleeping] = useState(false);
 
