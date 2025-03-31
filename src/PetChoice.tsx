@@ -77,8 +77,8 @@ export default function PetChoice(){
                     <option key={p} value={p}>{p}</option>
                 ))}
             </select>
-            <div className="border" style={{ width: 1000, height: 500 }}>
-                <div className="stats" style={{ alignItems : "left" }} >
+            <div className="d-flex justify-content-between" >
+                <div className="stats" >
                     <p>hunger: {hunger}</p>
                     <p>energy: {energy}</p>
                     <p>happiness: {happiness}</p>
