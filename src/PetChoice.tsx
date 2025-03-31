@@ -66,8 +66,8 @@ export default function PetChoice(){
 
     }, [isSleeping]);
 
-    const feed = () => setHunger((h) => Math.min(100, h + 20));
-    const play = () => setHappiness((h) => Math.min(100, h + 20));
+    const feed = () => setHunger((h) => isSleeping ? h : Math.min(100, h + 20));
+    const play = () => setHappiness((h) => isSleeping ? h : Math.min(100, h + 20));
     const toggleSleep = () => setIsSleeping((s) => !s);
 
     return (
