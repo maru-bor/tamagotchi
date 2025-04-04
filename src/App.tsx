@@ -1,4 +1,5 @@
 import './App.css'
+import 'bootstrap/dist/css/bootstrap.min.css'
 import PetChoice from "./PetChoice.tsx";
 
 
@@ -8,7 +9,7 @@ function App() {
     return (
         <>
             <div>
-                <h3>tamagotchi</h3>
+                <h3>virtual pet</h3>
                 <PetChoice/>
             </div>
         </>
