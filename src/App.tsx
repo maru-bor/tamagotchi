@@ -9,7 +9,7 @@ function App() {
     return (
         <>
             <div>
-                <h3>virtual pet</h3>
+                <h1>virtual pet</h1>
                 <PetChoice/>
             </div>
         </>
