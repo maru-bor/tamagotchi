@@ -18,16 +18,15 @@ const petsSleep : {[index: string]:string} = {
 };
 
 export default function PetChoice(){
-    const [pet, setPet] = useState(localStorage.getItem("pet") || "");
-    const [petLocked, setPetLocked] = useState(false);
-    const [hunger, setHunger] = useState(Number(localStorage.getItem("hunger")) || 50);
-    const [energy, setEnergy] = useState(Number(localStorage.getItem("energy")) || 50);
-    const [happiness, setHappiness] = useState(Number(localStorage.getItem("happiness")) || 50);
+    const [pet, setPet] = useState(localStorage.getItem("pet") ?? "--");
+    const [petLocked, setPetLocked] = useState(Boolean(localStorage.getItem("petLocked") ?? false));
+    const [hunger, setHunger] = useState(Number(localStorage.getItem("hunger")) ?? 50);
+    const [energy, setEnergy] = useState(Number(localStorage.getItem("energy")) ?? 50);
+    const [happiness, setHappiness] = useState(Number(localStorage.getItem("happiness")) ?? 50);
     const [position, setPosition] = useState(0);
     const [isSleeping, setIsSleeping] = useState(false);
     const resetPet = () => {
-        setPet("");
-        setPetLocked(false);
+        handlePetSelection("");
         setHunger(50);
         setEnergy(50);
         setHappiness(50);
@@ -36,40 +35,18 @@ export default function PetChoice(){
         localStorage.clear();
     };
 
-    useEffect(() => {
-        const storedPet = localStorage.getItem("pet");
-        const storedPetLocked = localStorage.getItem("petLocked") === "true";
-
-        if (storedPet && storedPetLocked) {
-            setPet(storedPet);
-            setPetLocked(true);
-        } else {
-            let chosenPet  = null;
-            // @ts-ignore
-            while (!pets.includes(chosenPet)) {
-                chosenPet = prompt("Choose your virtual pet: ${pets.join(", ")}");
-                if (chosenPet === null) {
-                    chosenPet = "Pes";
-                }
-            }
-            // @ts-ignore
-            setPet(chosenPet);
-            setPetLocked(true);
-            // @ts-ignore
-            localStorage.setItem("pet", chosenPet);
-            localStorage.setItem("petLocked", "true");
-        }
-    }, []);
 
     useEffect(() => {
+        localStorage.setItem("pet", pet);
+        localStorage.setItem("petLocked", String(petLocked));
         localStorage.setItem("hunger", hunger.toString());
         localStorage.setItem("energy", energy.toString());
         localStorage.setItem("happiness", happiness.toString());
-    }, [hunger, energy, happiness]);
+    }, [pet, petLocked, hunger, energy, happiness]);
 
     useEffect(() => {
         const interval = setInterval(() => {
-            setHunger((h) => Math.min(100, h + 5));
+            setHunger((h) => Math.min(100, h + 7));
             if (!isSleeping) {
                 setEnergy((e) => Math.max(0, e - 3));
                 setHappiness((h) => Math.max(0, h - 2));
@@ -79,6 +56,7 @@ export default function PetChoice(){
         return () => clearInterval(interval);
     }, [isSleeping]);
 
+    //interval for moving across the screen
     useEffect(() => {
         if (!isSleeping) {
             const moveInterval = setInterval(() => {
@@ -89,6 +67,7 @@ export default function PetChoice(){
     }, [isSleeping]);
 
 
+    //interval for sleeping
     useEffect(() => {
         let sleepInterval = 0;
         if (isSleeping) {
@@ -101,6 +80,7 @@ export default function PetChoice(){
     }, [isSleeping]);
 
 
+    //check pet dying
     useEffect(() => {
         if (hunger === 100 && energy === 0 && happiness === 0) {
             alert("Your pet died because you neglected it! Your virtual pet will be reset now.. ");
@@ -108,22 +88,28 @@ export default function PetChoice(){
         }
     }, [hunger, energy, happiness]);
 
-    const feed = () => setHunger((h) => isSleeping ? h : Math.max(0, h - 7));
+    const feed = () => setHunger((h) => isSleeping ? h : Math.max(0, h - 5));
     const play = () => setHappiness((h) => isSleeping ? h : Math.min(100, h + 20));
     const toggleSleep = () => setIsSleeping((s) => !s);
 
     // @ts-ignore
     const handlePetSelection = (e) => {
         const selectedPet = e.target.value;
-        if (!petLocked) {
-            setPet(selectedPet);
+        setPet(selectedPet);
+        if (selectedPet === "") {
+            setPetLocked(false);
+        } else {
             setPetLocked(true);
         }
     };
     return (
         <div className="app">
-            {pet &&
-                <div className="border" style={{ width: 1000, height: 500 }}>
+            <select value={pet} onChange={handlePetSelection} disabled={petLocked === true ? true : false}>
+                {pets.map((p) => (
+                    <option key={p} value={p}>{p}</option>
+                ))}
+            </select>
+            <div className="border" style={{ width: 1000, height: 500 }}>
             <div className="stats" style={{ alignItems : "left" }} >
                 <p>hunger: {hunger}</p>
                 <p>energy: {energy}</p>
@@ -144,7 +130,6 @@ export default function PetChoice(){
                 <button onClick={toggleSleep}>{isSleeping ? "wake up" : "sleep"}</button>
             </div>
         </div>
-            }
 
 
         </div>
