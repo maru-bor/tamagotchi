@@ -32,16 +32,31 @@ export default function PetChoice(){
     const [isSleeping, setIsSleeping] = useState(false);
     const maxMoveWidth = 500;
     const resetPet = () => {
+        window.location.reload();
         localStorage.clear();
         handlePetSelection("");
-        setHunger(50);
-        setEnergy(50);
-        setHappiness(50);
         setIsSleeping(false);
         setPosition(0);
 
 
+
     };
+
+    const handlePetSelection = (e: any) => {
+        const selectedPet = e.target.value;
+        if (selectedPet === "--") {
+            setPetLocked(false);
+        } else {
+            setPet(selectedPet);
+            setPetLocked(true);
+            setHunger(50);
+            setEnergy(50);
+            setHappiness(50);
+        }
+    };
+    const feed = () => setHunger((h) => isSleeping || !petLocked? h : Math.max(0, h - 5));
+    const play = () => setHappiness((h) => isSleeping || !petLocked ? h : Math.min(100, h + 20));
+    const toggleSleep = () => setIsSleeping((s) => !petLocked ? s : !s);
 
 
 
@@ -56,16 +71,12 @@ export default function PetChoice(){
     }, [pet, petLocked, hunger, energy, happiness]);
 
     useEffect(() => {
-
         const interval = setInterval(() => {
-            if(petLocked){
-                setHunger((h) => Math.min(100, h + 7));
-                if (!isSleeping) {
-                    setEnergy((e) => Math.max(0, e - 3));
-                    setHappiness((h) => Math.max(0, h - 2));
-                }
+            setHunger((h) => petLocked ? Math.min(100, h + 7) : h);
+            if (!isSleeping) {
+                setEnergy((e) => petLocked ? Math.max(0, e - 3) : e);
+                setHappiness((h) => petLocked ? Math.max(0, h - 2) : h);
             }
-
         }, 10000);
 
         return () => clearInterval(interval);
@@ -98,35 +109,24 @@ export default function PetChoice(){
     //reset pet
     useEffect(() => {
         if (hunger === 100 && energy === 0 && happiness === 0) {
-            alert("Your pet died because you neglected it! Your virtual pet will be reset now.. ");
+            alert("Your pet died :( Your virtual pet will be reset now.. ");
             resetPet();
         }
     }, [hunger, energy, happiness]);
 
-    const feed = () => setHunger((h) => isSleeping ? h : Math.max(0, h - 5));
-    const play = () => setHappiness((h) => isSleeping ? h : Math.min(100, h + 20));
-    const toggleSleep = () => setIsSleeping((s) => !s);
 
-    // @ts-ignore
-    const handlePetSelection = (e) => {
-        const selectedPet = e.target.value;
-        if (selectedPet === "--") {
-            setPetLocked(false);
-        } else {
-            setPet(selectedPet);
-            setPetLocked(true);
-        }
-    };
     return (
         <div className="app">
-            <select id="select-pet" className="form-select" value={pet} onChange={handlePetSelection} disabled={petLocked === true ? true : false}>
+            <h1 className="fw-bold mb-3">virtual pet</h1>
+            <select className="form-select-lg mb-3" value={pet} onChange={handlePetSelection}
+                    disabled={petLocked === true ? true : false}>
                     <option value="">--</option>
                 {pets.map((p) => (
                     <option key={p} value={p}>{p}</option>
                 ))}
             </select>
-            <div className="border border-5 border-primary-subtle" style={{ width: "70em", height: "35em" }}>
-            <div className="stats" style={{ alignItems : "left" }} >
+            <div className="border border-5 border-primary-subtle" style={{ width: "50em", height: "37em" }}>
+            <div className="text-center fs-5 fw-bold text-dark mt-3" style={{ alignItems : "left" }} >
                 <p>hunger: {hunger}</p>
                 <p>energy: {energy}</p>
                 <p>happiness: {happiness}</p>
@@ -141,12 +141,13 @@ export default function PetChoice(){
                 />
             </div>
             <div className="d-flex justify-content-center ">
-                <button className="btn btn-primary btn-lg" onClick={feed}>feed</button>
-                <button className="btn btn-primary btn-lg" onClick={play}>play</button>
-                <button className="btn btn-primary btn-lg" onClick={toggleSleep}>{isSleeping ? "wake up" : "sleep"}</button>
+                <button className="btn btn-primary btn-lg fw-bold " onClick={feed}>feed</button>
+                <button className="btn btn-primary btn-lg fw-bold" onClick={play}>play</button>
+                <button className="btn btn-primary btn-lg fw-bold" onClick={toggleSleep}>{isSleeping ? "wake up" : "sleep"}
+                </button>
             </div>
             <div className="reset-btn">
-                <button className="btn btn-danger btn-lg" onClick={resetPet}>reset pet</button>
+                <button className="btn btn-danger btn-lg fw-bold mt-3" onClick={resetPet}>reset pet</button>
             </div>
         </div>
 
