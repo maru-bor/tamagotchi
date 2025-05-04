@@ -23,13 +23,14 @@ const petsSleep : {[index: string]:string} = {
 };
 
 export default function PetChoice(){
-    const [pet, setPet] = useState(localStorage.getItem("pet") ?? "--");
+    const [pet, setPet] = useState(localStorage.getItem("pet") ?? "Select a pet");
     const [petLocked, setPetLocked] = useState(Boolean(localStorage.getItem("petLocked") ?? false));
     const [hunger, setHunger] = useState(Number(localStorage.getItem("hunger")) ?? 50);
     const [energy, setEnergy] = useState(Number(localStorage.getItem("energy")) ?? 50);
     const [happiness, setHappiness] = useState(Number(localStorage.getItem("happiness")) ?? 50);
     const [position, setPosition] = useState(0);
     const [isSleeping, setIsSleeping] = useState(false);
+    const [darkMode, setDarkMode] = useState(false);
     const maxMoveWidth = 500;
     const resetPet = () => {
         window.location.reload();
@@ -52,11 +53,22 @@ export default function PetChoice(){
             setHunger(50);
             setEnergy(50);
             setHappiness(50);
+            setDarkMode(false);
         }
     };
     const feed = () => setHunger((h) => isSleeping || !petLocked? h : Math.max(0, h - 5));
     const play = () => setHappiness((h) => isSleeping || !petLocked ? h : Math.min(100, h + 20));
     const toggleSleep = () => setIsSleeping((s) => !petLocked ? s : !s);
+
+    function toggleDarkMode(){
+        if(!darkMode) {
+            setDarkMode(true);
+            document.documentElement.setAttribute("data-bs-theme", "dark");
+        }else {
+            setDarkMode(false);
+            document.documentElement.setAttribute("data-bs-theme", "light");
+        }
+    }
 
 
 
@@ -118,15 +130,17 @@ export default function PetChoice(){
     return (
         <div className="app">
             <h1 className="fw-bold mb-3">virtual pet</h1>
-            <select className="form-select-lg mb-3" value={pet} onChange={handlePetSelection}
+
+            <select className="form-select mb-3"  value={pet} onChange={handlePetSelection}
                     disabled={petLocked === true ? true : false}>
                     <option value="">--</option>
                 {pets.map((p) => (
                     <option key={p} value={p}>{p}</option>
                 ))}
             </select>
-            <div className="border border-5 border-primary-subtle" style={{ width: "50em", height: "37em" }}>
-            <div className="text-center fs-5 fw-bold text-dark mt-3" style={{ alignItems : "left" }} >
+
+            <div id="petBorder" className="border border-5 border-primary-subtle" style={{ width: "50em", height: "37em" }} >
+            <div className="text-center fs-5 fw-bold mt-3" style={{ alignItems : "left" }} >
                 <p>hunger: {hunger}</p>
                 <p>energy: {energy}</p>
                 <p>happiness: {happiness}</p>
@@ -150,6 +164,9 @@ export default function PetChoice(){
                 <button className="btn btn-danger btn-lg fw-bold mt-3" onClick={resetPet}>reset pet</button>
             </div>
         </div>
+            <button  className={`btn ${darkMode ? "btn-light" : "btn-dark"}  btn-lg fw-bold`} onClick={toggleDarkMode}>
+                {darkMode ? "light mode" : "dark mode"}
+            </button>
 
 
         </div>
